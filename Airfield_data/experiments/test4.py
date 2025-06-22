@@ -1,9 +1,4 @@
-# experiments/task1_4.py
-"""
-Task 1.4 – Weighted-Gini Decision-Tree & pair-wise accuracy table.
-Run:
-    python -m experiments.task1_4
-"""
+
 
 import itertools
 from pathlib import Path
@@ -38,15 +33,15 @@ def pairwise_accuracy(tree, X, y):
 def main():
     X_tr, y_tr, X_te, y_te, cats = load_airfield_statistics()
 
-    # --- vanilla tree (from Task 1.1) -------------------------------------
+    
     dt_std = DecisionTreeClassifier(cats, random_state=0).fit(X_tr, y_tr)
 
-    # --- weighted-Gini tree ----------------------------------------------
+   
     dt_wgt = WeightedDecisionTreeClassifier(
         cats, loss_matrix=LOSS_MATRIX, random_state=0
     ).fit(X_tr, y_tr)
 
-    # --- accuracies -------------------------------------------------------
+   
     std_pair = pairwise_accuracy(dt_std, X_te, y_te)
     wgt_pair = pairwise_accuracy(dt_wgt, X_te, y_te)
 
@@ -55,7 +50,6 @@ def main():
     for (c1, c2), wp, sp in zip(PAIR_LIST, wgt_pair, std_pair):
         print(f"({c1},{c2}) | {wp:.3f}    | {sp:.3f}   | {wp-sp:+.3f}")
 
-    # --- save to JSON -----------------------------------------------------
     import json
     out = {
         "weighted": {f"{c1}_{c2}": round(float(v), 4) for (c1, c2), v in zip(PAIR_LIST, wgt_pair)},
