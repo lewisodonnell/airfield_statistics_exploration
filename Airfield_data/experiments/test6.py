@@ -1,8 +1,4 @@
-# experiments/task2_2.py
-"""
-Task 2.2 – 5-fold CV over λ × c grid for Modified-Huber SVM.
-Outputs:  *CV table*  +  *loss-shape plot* for c ∈ {0.5,1,10}
-"""
+
 
 from pathlib import Path
 import json
@@ -23,12 +19,12 @@ def relabel(y):
 
 
 def main():
-    # ─── data ────────────────────────────────────────────────────────────
+    
     X_tr, y_tr, X_te, y_te, _ = load_airfield_statistics()
     y_tr_bin = relabel(y_tr)
     y_te_bin = relabel(y_te)
 
-    # ─── grid-search CV ──────────────────────────────────────────────────
+   
     lambdas = [1, 100, 10_000]
     c_vals  = [0.5, 1, 10]
 
@@ -45,7 +41,6 @@ def main():
         json.dump(cv_table, f, indent=2)
     print("CV table saved ➜ results/task2_2_cv_table.json")
 
-    # ─── evaluate best model ─────────────────────────────────────────────
     acc_test = best_model.score(X_te, y_te_bin)
     bal_acc  = balanced_accuracy(y_te_bin, best_model.predict(X_te))
 
@@ -53,7 +48,7 @@ def main():
     print(f"Test accuracy      {acc_test:.4f}")
     print(f"Balanced accuracy  {bal_acc:.4f}")
 
-    # ─── loss-shape plot for different c ────────────────────────────────
+ 
     t_grid = np.linspace(-2, 3, 500)
     plt.figure(figsize=(6, 4))
     for c in c_vals:
