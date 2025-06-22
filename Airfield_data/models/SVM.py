@@ -2,7 +2,7 @@
 """
 Mini-batch SGD for a *linear*, binary SVM with either Hinge or
 Modified-Huber loss + L2 regularisation.  Includes a simple grid-search
-cross-validation helper used in Task 2.2.
+cross-validation helper.
 """
 
 from __future__ import annotations
@@ -17,16 +17,16 @@ from metrics import balanced_accuracy
 
 
 class LinearSVM(BaseModel):
-    # ─────────────────────────── constructor ────────────────────────────
+    
     def __init__(
         self,
-        loss: str = "huber",          # "huber" or "hinge"
+        loss: str = "huber",         
         lambda_: float = 1e2,
         learning_rate: float = 1e-4,
         batch_size: int = 32,
         max_iter: int = 2000,
         stop_tol: float = 1e-3,
-        c: float = 1.0,               # only for huber
+        c: float = 1.0,          
         standardise: bool = True,
         random_state: Optional[int] = None,
     ):
@@ -48,10 +48,10 @@ class LinearSVM(BaseModel):
         self.w_: np.ndarray | None = None
         self.loss_history_: List[float] = []
         self.iter_history_: List[int] = []
-        self._mu_: np.ndarray | None = None     # standardisation μ
-        self._sigma_: np.ndarray | None = None  # standardisation σ
+        self._mu_: np.ndarray | None = None    
+        self._sigma_: np.ndarray | None = None  
 
-    # ───────────────────────────── public API ────────────────────────────
+    
     def fit(self, X, y):
         X_arr, y_arr = self._check_Xy(X, y)
         if self.standardise:
@@ -92,17 +92,16 @@ class LinearSVM(BaseModel):
         raw = self._decision_function(X)
         return np.where(raw >= 0, 1, -1)
 
-    # balanced accuracy helper
+    
     def balanced_accuracy(self, X, y):
         return balanced_accuracy(y, self.predict(X))
 
-    # margin-violation count
+    
     def margin_violations(self, X, y):
         y = y.ravel()
         raw = self._decision_function(X)
         return int(np.sum(y * raw < 1))
 
-    # ──────────────────────── decision function ──────────────────────────
     def _decision_function(self, X):
         X_arr = X.to_numpy() if isinstance(X, pd.DataFrame) else np.asarray(X)
         if self.standardise and self._mu_ is not None:
@@ -110,7 +109,7 @@ class LinearSVM(BaseModel):
         X_arr = np.hstack([X_arr, np.ones((len(X_arr), 1))])
         return X_arr @ self.w_
 
-    # ───────────────────────── loss & gradient ───────────────────────────
+  
     def _loss(self, w, X, y):
         margin = y * (X @ w)
         if self.loss == "huber":
@@ -134,11 +133,11 @@ class LinearSVM(BaseModel):
 
         grad = -self.lambda_ * (g * y) @ X
         grad += w
-        grad[-1] -= w[-1]          # no reg on bias
+        grad[-1] -= w[-1]      
         grad /= len(y)
         return grad
 
-    # ─────────────────────── classmethod grid-search ─────────────────────
+  
     @classmethod
     def grid_search_cv(
         cls,
@@ -185,13 +184,13 @@ class LinearSVM(BaseModel):
             if mean_acc > best_acc:
                 best_acc, best_params = mean_acc, (λ, c)
 
-        # refit on full data with best params
+       
         best_model = cls(
             loss="huber",
             lambda_=best_params[0],
             c=best_params[1],
             **common_kwargs,
         ).fit(X, y)
-        best_model.cv_results_ = cv_table          # attach for convenience
+        best_model.cv_results_ = cv_table          
         return best_model, cv_table
 
