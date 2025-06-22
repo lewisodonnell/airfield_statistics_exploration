@@ -1,14 +1,6 @@
-# models/DT.py
+
 """
 Decision-Tree classifier (hard & soft outputs) with *real* Gini feature-importance.
-
-Key points
-----------
-* `predict_proba` returns class probabilities.
-* `feature_importances_` is populated exactly as in the notebook:
-      importance(j) = Σ_nodes p_t · ΔGini_t   where  p_t = N_t / N_root
-* `feature_importances_` is scaled so the maximum feature gets value 1
-  (makes percentage plots easy – just multiply by 100).
 """
 
 from __future__ import annotations
@@ -19,7 +11,7 @@ import pandas as pd
 from models.base import BaseModel
 
 
-# ──────────────────────────── helper funcs ────────────────────────────────
+
 def _gini_index(y: np.ndarray) -> float:
     _, counts = np.unique(y, return_counts=True)
     p = counts / len(y)
@@ -51,7 +43,7 @@ def _gini_split_value(X: np.ndarray, y: np.ndarray, column: int, categorical: bo
     return best_gini, best_val
 
 
-# ───────────────────────── Decision-Tree class ────────────────────────────
+
 class DecisionTreeClassifier(BaseModel):
     def __init__(
         self,
@@ -73,7 +65,7 @@ class DecisionTreeClassifier(BaseModel):
         self.feature_importances_: np.ndarray | None = None
         self.tree_: Dict[str, Any] | None = None
 
-    # ------------------------------------------------------------------ fit
+    
     def fit(
         self,
         X: pd.DataFrame | np.ndarray,
@@ -91,24 +83,24 @@ class DecisionTreeClassifier(BaseModel):
 
         self.tree_ = self._build_tree(X_arr, y_arr, depth=1)
 
-        # scale importances so max = 1  (same convention you used in notebook)
+        
         max_val = self.feature_importances_.max()
         if max_val > 0:
             self.feature_importances_ /= max_val
         return self
 
-    # ------------------------------------------------------- predict_proba
+
     def predict_proba(self, X: pd.DataFrame | np.ndarray) -> np.ndarray:
         X_arr = X.to_numpy() if isinstance(X, pd.DataFrame) else np.asarray(X)
         return np.vstack([self._classify_soft(self.tree_, x) for x in X_arr])
 
-    # ----------------------------------------------------------- predict
+    
     def predict(self, X):
         return self.predict_proba(X).argmax(axis=1)
 
-    # ───────────────────── internal recursive builder ─────────────────────
+   
     def _build_tree(self, X: np.ndarray, y: np.ndarray, depth: int):
-        # stopping conditions
+       
         if (
             len(np.unique(y)) == 1
             or depth > self.max_depth
@@ -131,7 +123,7 @@ class DecisionTreeClassifier(BaseModel):
         categorical = self.cat_columns_dict[best_col]
         (X_l, y_l), (X_r, y_r) = _split_samples(X, y, best_col, best_val, categorical)
 
-        # ─── accumulate feature importance (Δ Gini) ───
+        
         g_parent = _gini_index(y)
         g_left = _gini_index(y_l)
         g_right = _gini_index(y_r)
@@ -150,7 +142,7 @@ class DecisionTreeClassifier(BaseModel):
             "right": self._build_tree(X_r, y_r, depth + 1),
         }
 
-    # ─────────────────────────────── classify helper ───────────────────────
+    
     def _classify_soft(self, node: Dict[str, Any], x: np.ndarray) -> np.ndarray:
         if "counts" in node:  # leaf
             counts = node["counts"]
