@@ -7,14 +7,8 @@ import numpy as np
 ArrayLike = Union[np.ndarray]
 
 
-class KNNClassifier:  # pylint: disable=too-few-public-methods
-    """Brute‑force k‑NN (L2 distance).
-
-    Parameters
-    ----------
-    k : int, default=25
-        Number of neighbours to consider.
-    """
+class KNNClassifier:  
+   
 
     def __init__(self, k: int = 25):
         if k < 1:
@@ -23,9 +17,7 @@ class KNNClassifier:  # pylint: disable=too-few-public-methods
         self.X_train: np.ndarray | None = None
         self.y_train: np.ndarray | None = None
 
-    # ------------------------------------------------------------------
-    # Public API -------------------------------------------------------
-    # ------------------------------------------------------------------
+    
     def fit(self, X: ArrayLike, y: ArrayLike) -> "KNNClassifier":
         """Store the training set (no training cost)."""
         self.X_train = np.asarray(X)
@@ -44,15 +36,13 @@ class KNNClassifier:  # pylint: disable=too-few-public-methods
             np.argmax(np.bincount(self.y_train[idx])) for idx in neigh_ind
         ])
 
-    def score(self, X: ArrayLike, y: ArrayLike) -> float:  # same API as scikit‑learn
+    def score(self, X: ArrayLike, y: ArrayLike) -> float: 
         """Return mean accuracy on the given test data and labels."""
         y_pred = self.predict(X)
         y_true = np.asarray(y)
         return float(np.mean(y_true == y_pred))
 
-    # ------------------------------------------------------------------
-    # Internal helpers -------------------------------------------------
-    # ------------------------------------------------------------------
+    
     @staticmethod
     def _euclidean_distance(x_i: np.ndarray, X_j: np.ndarray) -> np.ndarray:
         """Vectorised L2 distance between *x_i* and *all* rows of *X_j*."""
@@ -65,7 +55,7 @@ class KNNClassifier:  # pylint: disable=too-few-public-methods
         dist_list: list[np.ndarray] = []
         idx_list: list[np.ndarray] = []
         for x in X_test:
-            dists = self._euclidean_distance(x, self.X_train)  # type: ignore[arg-type]
+            dists = self._euclidean_distance(x, self.X_train)  
             idx = np.argsort(dists)[: self.k]
             idx_list.append(idx)
             if return_distance:
