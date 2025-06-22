@@ -48,10 +48,10 @@ Airfield_data/
 ### Experiments
 
 The `experiments/` directory contains files that, when run, perform experiments with the different models on the dataset.  Each script can be executed directly from the
-repository root, for example
+repository root by ensuring the python path is the Airfield_data folder
 
 ```bash
-python -m experiments.test1
+PYTHONPATH=Airfield_data python -m experiments.test2
 ```
 
 Results such as plots and JSON metrics are written to a `results/` directory created in the working folder.

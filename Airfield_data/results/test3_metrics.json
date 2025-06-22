@@ -1,0 +1,12 @@
+{
+  "train_accuracy": 0.942207,
+  "test_accuracy": 0.84898,
+  "importances_pct": {
+    "Days of airfrost": 11.28,
+    "Precipitation": 6.02,
+    "Sunshine hours": 29.09,
+    "Humidity (%)": 100.0,
+    "Wind Speed": 2.83,
+    "Aircraft total movements": 4.46
+  }
+}
