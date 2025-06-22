@@ -42,7 +42,7 @@ def main():
     plt.legend()
     plt.tight_layout()
 
-    fig_path = RESULTS_DIR / "task2_1_loss_curves.png"
+    fig_path = RESULTS_DIR / "test5_loss_curves.png"
     plt.savefig(fig_path, dpi=300)
     print(f"Loss-curve plot ➜ {fig_path}")
 
@@ -56,8 +56,8 @@ def main():
     plt.title("Hinge vs. Modified Huber Loss")
     plt.legend()
     plt.tight_layout()
-    plt.savefig(RESULTS_DIR / "task2_1_loss_functions.png", dpi=300)
-    print(f"Loss-curve plot ➜ {RESULTS_DIR / 'task2_1_loss_functions.png'}")
+    plt.savefig(RESULTS_DIR / "test5_loss_functions.png", dpi=300)
+    print(f"Loss-curve plot ➜ {RESULTS_DIR / 'test5_loss_functions.png'}")
 
   
     metrics = {
@@ -72,7 +72,7 @@ def main():
     for k, v in metrics.items():
         print(f"{k:18}: {v:.6f}" if "acc" in k else f"{k:18}: {v}")
 
-    with open(RESULTS_DIR / "task2_1_metrics.json", "w") as f:
+    with open(RESULTS_DIR / "test5_metrics.json", "w") as f:
         json.dump({k: float(v) for k, v in metrics.items()}, f, indent=2)
 
 
