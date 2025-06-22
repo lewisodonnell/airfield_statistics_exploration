@@ -1,8 +1,4 @@
-# experiments/task3_1.py
-"""
-Task 3.1 – MLP regression for Tmin / Tmax with compound loss
-(identical settings to the original notebook).
-"""
+
 
 from pathlib import Path
 import json
@@ -19,17 +15,13 @@ RESULTS_DIR.mkdir(exist_ok=True)
 
 
 def load_regression_data():
-    """
-    Returns
-    -------
-    X_train, y_train, X_test, y_test  (all numpy arrays, float64)
-    """
-    # six input features via loader (classification setup)
+
+   
     X_tr_df, _, X_te_df, _, _ = load_airfield_statistics()
     X_tr = X_tr_df.to_numpy(dtype=np.float64)  # ensure float
     X_te = X_te_df.to_numpy(dtype=np.float64)
 
-    # read CSVs again to grab the two regression targets (last two columns)
+    
     train_df = pd.read_csv("data/airfield_statistics_train.csv")
     test_df  = pd.read_csv("data/airfield_statistics_test.csv")
     y_tr = train_df.iloc[:, -2:].to_numpy(dtype=np.float64)
@@ -47,9 +39,9 @@ def main():
 
     for lam in lambdas:
         mlp = MLP(seed=2)
-        mlp.add_layer(6, 20)               # input  → hidden
-        mlp.add_layer(20, 20, "relu")      # hidden → hidden
-        mlp.add_layer(20, 2,  "identity")  # hidden → output (linear)
+        mlp.add_layer(6, 20)               
+        mlp.add_layer(20, 20, "relu")      
+        mlp.add_layer(20, 2,  "identity")  
 
         mlp.fit(
             X_tr, y_tr,
@@ -71,7 +63,7 @@ def main():
         print(f"λ={lam}: R²(train)={metrics[lam]['R2_train']:.3f} | "
               f"R²(test)={metrics[lam]['R2_test']:.3f}")
 
-    # ---------------- loss-curve plot ----------------
+    
     plt.figure(figsize=(8, 5))
     for lam, curve in loss_curves.items():
         plt.plot(curve, label=f"λ={lam}")
@@ -84,7 +76,6 @@ def main():
     plt.savefig(plot_path, dpi=300)
     print(f"Plot saved ➜ {plot_path}")
 
-    # ---------------- save metrics -------------------
     with open(RESULTS_DIR / "task3_1_metrics.json", "w") as f:
         json.dump(metrics, f, indent=2)
 
