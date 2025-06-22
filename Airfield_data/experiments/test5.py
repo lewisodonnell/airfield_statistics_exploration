@@ -1,10 +1,4 @@
-# experiments/task2_1.py
-"""
-Task 2.1  –  Binary linear SVM: Hinge vs Modified-Huber.
 
-Run:
-    python -m experiments.task2_1
-"""
 
 from pathlib import Path
 import json
@@ -23,22 +17,22 @@ def relabel_to_binary(y):
 
 
 def main():
-    # ─── data prep ──────────────────────────────────────────────
+    
     X_tr, y_tr, X_te, y_te, _ = load_airfield_statistics()
     y_tr_bin = relabel_to_binary(y_tr)
     y_te_bin = relabel_to_binary(y_te)
 
-    # ─── Huber SVM ──────────────────────────────────────────────
+    
     huber_svm = LinearSVM(
         loss="huber", lambda_=100, random_state=0
     ).fit(X_tr, y_tr_bin)
 
-    # ─── Hinge SVM ──────────────────────────────────────────────
+  
     hinge_svm = LinearSVM(
         loss="hinge", lambda_=100, random_state=0
     ).fit(X_tr, y_tr_bin)
 
-    # ─── plot loss curves ───────────────────────────────────────
+    
     plt.figure(figsize=(6, 4))
     plt.plot(huber_svm.iter_history_, huber_svm.loss_history_, label="Huber")
     plt.plot(hinge_svm.iter_history_, hinge_svm.loss_history_, label="Hinge")
@@ -65,7 +59,7 @@ def main():
     plt.savefig(RESULTS_DIR / "task2_1_loss_functions.png", dpi=300)
     print(f"Loss-curve plot ➜ {RESULTS_DIR / 'task2_1_loss_functions.png'}")
 
-    # ─── metrics ────────────────────────────────────────────────
+  
     metrics = {
         "huber_train_acc":  huber_svm.score(X_tr, y_tr_bin),
         "huber_test_acc":   huber_svm.score(X_te, y_te_bin),
