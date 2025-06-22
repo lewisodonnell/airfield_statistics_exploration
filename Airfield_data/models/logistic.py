@@ -1,6 +1,6 @@
 # models/logistic.py
 """
-Single-layer logistic classifier (binary) used in Task 3 .2
+Single-layer logistic classifier (binary)
 – implements forward-pass, SGD step and helpers.
 """
 
@@ -8,12 +8,11 @@ from __future__ import annotations
 import numpy as np
 from typing import Tuple
 
-# ───────────────────────── activation helpers ──────────────────────────
+
 def _sigmoid(z: np.ndarray) -> np.ndarray:
     return 1.0 / (1.0 + np.exp(-z))
 
 
-# ─────────────────────────── main class ────────────────────────────────
 class LogisticClassifier:
     """
     A single fully-connected layer with sigmoid activation.
@@ -27,9 +26,9 @@ class LogisticClassifier:
         self.W = rng.normal(size=(1, in_dim)) * np.sqrt(2.0 / (1 + in_dim))
         self.b = np.zeros(1)
 
-    # ─────────────────────── forward / predict ────────────────────────
+  
     def forward(self, X: np.ndarray) -> np.ndarray:
-        z = X @ self.W.T + self.b      # shape (N, 1)
+        z = X @ self.W.T + self.b    
         return _sigmoid(z)
 
     predict_proba = forward
@@ -37,7 +36,6 @@ class LogisticClassifier:
     def predict(self, X: np.ndarray, thresh: float = 0.5) -> np.ndarray:
         return (self.forward(X) >= thresh).astype(int).ravel()
 
-    # ──────────────────────── loss & gradient ─────────────────────────
     @staticmethod
     def _loss(y: np.ndarray, p: np.ndarray, eps: float = 1e-7) -> float:
         p = np.clip(p, eps, 1.0 - eps)
@@ -53,8 +51,8 @@ class LogisticClassifier:
         if y.ndim == 1:
             y = y.reshape(-1, 1)
 
-        p = self.forward(X)                 # (M,1)
-        delta = p - y                       # dL/dz
+        p = self.forward(X)               
+        delta = p - y                       
         grad_W = (delta.T @ X) / len(X)
         grad_b = delta.mean(axis=0)
 
