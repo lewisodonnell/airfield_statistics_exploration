@@ -29,7 +29,9 @@ Airfield_data/
  ├── experiments/     Stand‑alone scripts for each coursework task
  ├── metrics.py       Accuracy, ROC/AUC, balanced accuracy and R² metrics
  ├── models/          Lightweight implementations of DT, RF, kNN, SVM and MLP
- └── tests/           Unit tests exercising the main models
+ ├── tests/           Unit tests exercising the main models
+ └── results/         Contains the results from running each test file
+ 
 ```
 
 ### Models
