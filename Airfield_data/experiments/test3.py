@@ -40,11 +40,11 @@ def main():
     plt.xlabel("Importance (% of max)")
     plt.tight_layout()
 
-    fig_path = RESULTS_DIR / "task1_3_importances.png"
+    fig_path = RESULTS_DIR / "test3_importances.png"
     plt.savefig(fig_path, dpi=300)
     print(f"Gini importance plot ➜ {fig_path}")
 
-    json_path = RESULTS_DIR / "task1_3_metrics.json"
+    json_path = RESULTS_DIR / "test3_metrics.json"
     with open(json_path, "w") as f:
         json.dump(
             {
