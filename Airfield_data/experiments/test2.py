@@ -56,8 +56,8 @@ def main():
     results_dir = Path("results")
     results_dir.mkdir(exist_ok=True)
 
-    fig_path = results_dir / "task1_2_rocs.png"
-    json_path = results_dir / "task1_2_auc.json"
+    fig_path = results_dir / "test2_rocs.png"
+    json_path = results_dir / "test2_auc.json"
 
     fig.savefig(fig_path, dpi=300)
     with open(json_path, "w") as f:
