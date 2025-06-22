@@ -69,7 +69,7 @@ def main() -> Dict[str, float]:
         "knn_std_test": knn_std_test_acc,
     }
 
-    with (RESULTS_DIR / "task1_metrics.json").open("w") as fh:
+    with (RESULTS_DIR / "test_metrics.json").open("w") as fh:
         json.dump(metrics, fh, indent=2)
 
     return metrics
