@@ -72,11 +72,11 @@ def main():
     plt.title("Training Compound Loss vs. Epoch")
     plt.legend()
     plt.tight_layout()
-    plot_path = RESULTS_DIR / "task3_1_loss_by_lambda.png"
+    plot_path = RESULTS_DIR / "test7_loss_by_lambda.png"
     plt.savefig(plot_path, dpi=300)
     print(f"Plot saved ➜ {plot_path}")
 
-    with open(RESULTS_DIR / "task3_1_metrics.json", "w") as f:
+    with open(RESULTS_DIR / "test7_metrics.json", "w") as f:
         json.dump(metrics, f, indent=2)
 
 
