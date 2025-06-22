@@ -55,7 +55,7 @@ def main():
     pretrained.add_layer(20, 20, "relu")
     pretrained.add_layer(20, 2, "identity")
 
-    w_file = Path("results/task3_1_mlp_lambda0.npz")
+    w_file = Path("results/test7_mlp_lambda0.npz")
     if w_file.exists():
         ws = np.load(w_file)
         for lyr, idx in zip(pretrained.layers, range(3)):
@@ -106,17 +106,17 @@ def main():
     plt.figure(); plt.plot(loss_transfer)
     plt.xlabel("Epoch"); plt.ylabel("Loss")
     plt.title("Transfer-Learned Classifier Training")
-    plt.savefig(RESULTS / "task3_2_transfer_loss.png", dpi=300)
+    plt.savefig(RESULTS / "test8_transfer_loss.png", dpi=300)
 
     plt.figure(); plt.hist(clf.forward(X_te_feat).ravel(), bins=20)
     plt.xlabel("p"); plt.ylabel("Count")
     plt.title("Histogram of Predicted Probabilities (transfer)")
-    plt.savefig(RESULTS / "task3_2_hist_transfer.png", dpi=300)
+    plt.savefig(RESULTS / "test8_hist_transfer.png", dpi=300)
 
     plt.figure(); plt.plot(loss_scratch)
     plt.xlabel("Epoch"); plt.ylabel("Loss")
     plt.title("Loss of Non-Transfer Learning")
-    plt.savefig(RESULTS / "task3_2_scratch_loss.png", dpi=300)
+    plt.savefig(RESULTS / "test8_scratch_loss.png", dpi=300)
 
     plt.figure(figsize=(7,4))
     plt.plot(loss_transfer, label="Transfer Learning")
@@ -125,7 +125,7 @@ def main():
     plt.title("Comparison of Training Loss Curves")
     plt.legend()
     plt.tight_layout()
-    plt.savefig(RESULTS / "task3_2_comparison.png", dpi=300)
+    plt.savefig(RESULTS / "test8_comparison.png", dpi=300)
     plt.show()
 
 
