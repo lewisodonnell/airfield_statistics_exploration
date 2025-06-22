@@ -37,9 +37,9 @@ def main():
         random_state=0,
     )
 
-    with open(RESULTS_DIR / "task2_2_cv_table.json", "w") as f:
+    with open(RESULTS_DIR / "test6_cv_table.json", "w") as f:
         json.dump(cv_table, f, indent=2)
-    print("CV table saved ➜ results/task2_2_cv_table.json")
+    print("CV table saved ➜ results/test6_cv_table.json")
 
     acc_test = best_model.score(X_te, y_te_bin)
     bal_acc  = balanced_accuracy(y_te_bin, best_model.predict(X_te))
@@ -58,8 +58,8 @@ def main():
     plt.title("Modified Huber Loss for different $c$")
     plt.legend()
     plt.tight_layout()
-    plt.savefig(RESULTS_DIR / "task2_2_loss_c_curves.png", dpi=300)
-    print("Loss-shape plot ➜ results/task2_2_loss_c_curves.png")
+    plt.savefig(RESULTS_DIR / "test6_loss_c_curves.png", dpi=300)
+    print("Loss-shape plot ➜ results/test6_loss_c_curves.png")
 
 
 if __name__ == "__main__":
