@@ -17,23 +17,18 @@ RESULTS_DIR = ROOT / "results"
 RESULTS_DIR.mkdir(exist_ok=True)
 
 
-# ---------------------------------------------------------------------
-# Helper
-# ---------------------------------------------------------------------
 
 def _print_line(model_name: str, train_acc: float, test_acc: float) -> None:
     print(f"{model_name:>20} | train: {train_acc:6.3f} | test: {test_acc:6.3f}")
 
 
-# ---------------------------------------------------------------------
-# Main experiment
-# ---------------------------------------------------------------------
+
 
 def main() -> Dict[str, float]:
-    # 1. data ----------------------------------------------------------------
+   
     X_train, y_train, X_test, y_test, cat_columns_dict = load_airfield_statistics()
 
-    # 2. Decision‑tree --------------------------------------------------------
+
     dt = DecisionTreeClassifier(
         cat_columns_dict=cat_columns_dict,
         max_depth=10,
@@ -44,12 +39,12 @@ def main() -> Dict[str, float]:
     dt_train_acc = dt.score(X_train, y_train)
     dt_test_acc = dt.score(X_test, y_test)
 
-    # 3. k‑NN (raw) -----------------------------------------------------------
+   
     knn_raw = KNNClassifier(k=25).fit(X_train, y_train)
     knn_raw_train_acc = knn_raw.score(X_train, y_train)
     knn_raw_test_acc = knn_raw.score(X_test, y_test)
 
-    # 4. k‑NN (standardised) --------------------------------------------------
+   
     scaler = StandardScaler().fit(X_train)
     X_train_std = scaler.transform(X_train)
     X_test_std = scaler.transform(X_test)
@@ -58,13 +53,13 @@ def main() -> Dict[str, float]:
     knn_std_train_acc = knn_std.score(X_train_std, y_train)
     knn_std_test_acc = knn_std.score(X_test_std, y_test)
 
-    # 5. Display --------------------------------------------------------------
+   
     print("\n=== Task 1.1 accuracy scores ===")
     _print_line("Decision‑Tree", dt_train_acc, dt_test_acc)
     _print_line("k‑NN (raw)", knn_raw_train_acc, knn_raw_test_acc)
     _print_line("k‑NN (std)", knn_std_train_acc, knn_std_test_acc)
 
-    # 6. Persist for README ---------------------------------------------------
+   
     metrics = {
         "dt_train": dt_train_acc,
         "dt_test": dt_test_acc,
