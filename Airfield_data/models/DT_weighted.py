@@ -1,11 +1,7 @@
-# models/DT_weighted.py
-"""
-Weighted-Gini Decision-Tree   (Task 1.4 – MSc extension)
 
-* Inherits everything from our plain DecisionTreeClassifier.
-* Accepts a 4×4 loss-matrix L (np.ndarray).
-* Overrides the Gini calculation so each split minimises the weighted
-  impurity   Σ_{q≠q'} L_{qq'} π_q π_{q'}   as required.
+"""
+Weighted-Gini Decision-Tree   
+
 """
 
 from __future__ import annotations
@@ -36,25 +32,23 @@ class WeightedDecisionTreeClassifier(DecisionTreeClassifier):
             raise ValueError("loss_matrix must be square.")
         self.L = loss_matrix.astype(float)
 
-    # ───────────────────────── override the impurity calc ───────────────────
-    def _gini_index(self, y: np.ndarray) -> float:  # type: ignore[override]
+    
+    def _gini_index(self, y: np.ndarray) -> float:  
         counts = np.bincount(y, minlength=self.L.shape[0])
         p = counts / counts.sum()
-        # Σ_{q,q'} L_q,q'  p_q  p_q'
+        
         return float(np.sum(self.L * np.outer(p, p)))
 
-    # ───────────────────────── override the split routine ───────────────────
-    # we replace DecisionTreeClassifier._best_split with a version that calls
-    # our new _gini_index.  Everything else is identical.
+  
 
-    def _best_split(  # type: ignore[override]
+    def _best_split(  
         self, X: np.ndarray, y: np.ndarray, cat_columns_dict: Dict[int, bool]
     ) -> Tuple[float, Optional[int], Optional[float | str]]:
         best_gini, best_col, best_val = np.inf, None, None
         for col, categorical in cat_columns_dict.items():
             if len(np.unique(X[:, col])) < 2:
                 continue
-            gini, val = self._gini_split_value(X, y, col, categorical)  # type: ignore
+            gini, val = self._gini_split_value(X, y, col, categorical) 
             if gini < best_gini:
                 best_gini, best_col, best_val = gini, col, val
         return best_gini, best_col, best_val
