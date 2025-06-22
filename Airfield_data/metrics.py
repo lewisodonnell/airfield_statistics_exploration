@@ -5,14 +5,10 @@ from typing import Sequence, Tuple
 
 import numpy as np
 
-# ---------------------------------------------------------------------------
-# Typing helper
-# ---------------------------------------------------------------------------
+
 ArrayLike = Sequence | np.ndarray
 
-# ---------------------------------------------------------------------------
-# Classification accuracy
-# ---------------------------------------------------------------------------
+
 
 def accuracy_score(y_true: ArrayLike, y_pred: ArrayLike) -> float:
     """Simple mean accuracy.
@@ -27,9 +23,6 @@ def accuracy_score(y_true: ArrayLike, y_pred: ArrayLike) -> float:
     assert y_true.shape == y_pred.shape, "Input vectors must share shape"
     return float(np.mean(y_true == y_pred))
 
-# ---------------------------------------------------------------------------
-# ROC & AUC (binary)
-# ---------------------------------------------------------------------------
 
 def roc_curve(
     y_true: ArrayLike,
@@ -47,20 +40,20 @@ def roc_curve(
     assert y_true.ndim == 1 and y_score.ndim == 1, "Inputs must be 1‑D"
     assert y_true.shape == y_score.shape, "Mismatched shapes"
 
-    # Binarise y_true: True for positive class, False otherwise
+   
     y_true_bin = y_true == pos_label
 
-    # Sort scores descending, keep thresholds unique
+    
     desc_sort = np.argsort(-y_score)
     y_score_sorted = y_score[desc_sort]
     y_true_sorted = y_true_bin[desc_sort]
 
-    # Find distinct value indices (where score changes)
+    
     distinct_idx = np.where(np.diff(y_score_sorted))[0]
     threshold_idxs = np.r_[distinct_idx, y_true.size - 1]
 
     tps = np.cumsum(y_true_sorted)[threshold_idxs]
-    fps = 1 + threshold_idxs - tps  # negatives turned positive up to idx
+    fps = 1 + threshold_idxs - tps  
 
     tpr = tps / tps[-1] if tps[-1] else np.zeros_like(tps)
     fpr = fps / fps[-1] if fps[-1] else np.zeros_like(fps)
@@ -73,7 +66,7 @@ def auc(x: ArrayLike, y: ArrayLike) -> float:
     """Compute Area Under Curve using the trapezoidal rule."""
     return float(np.trapezoid(y, x))
 
-# ───────────────────────── balanced accuracy ──────────────────────────
+
 def balanced_accuracy(y_true: np.ndarray, y_pred: np.ndarray) -> float:
     """
     Balanced accuracy = (TPR + TNR) / 2
@@ -90,7 +83,6 @@ def balanced_accuracy(y_true: np.ndarray, y_pred: np.ndarray) -> float:
     return 0.5 * (tpr + tnr)
 
 
-# ───────────────────────────── R² score ────────────────────────────────
 def r2_score(y_true: np.ndarray, y_pred: np.ndarray) -> float:
     """
     Coefficient of determination for regression (supports multi-target).
