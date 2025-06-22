@@ -1,7 +1,7 @@
-# models/MLP.py
+
 """
 Simple 3-layer MLP (ReLU hidden layers, linear output) trained with mini-batch
-SGD and the compound loss from Task 3.
+SGD and the compound loss.
 """
 
 from __future__ import annotations
@@ -12,7 +12,7 @@ from tqdm import tqdm
 from models.losses import compound_loss, grad_compound_loss
 
 
-# ────────── helpers for dense layer & activations ──────────
+
 def dense(X, W, b):
     return X @ W.T + b
 
@@ -42,31 +42,22 @@ _activation = {
 
 
 
-# ───────────────────────────── MLP class ───────────────────────────────
+
 class MLP:
     def __init__(self, seed: int = 2):
         self.layers: List[dict] = []
         self.rng = np.random.default_rng(seed)
         self.loss_history_: List[float] = []
 
-    # -------- architecture helpers --------
+    
     def add_layer(self, in_dim: int, out_dim: int, act: str = "identity"):
         W = self.rng.normal(size=(out_dim, in_dim)) * np.sqrt(2.0 / (in_dim + out_dim))
         b = np.zeros(out_dim)
         self.layers.append({"W": W, "b": b, "act": act})
 
-    # ─────────────────────────── forward pass ────────────────────────────
+    
     def _forward(self, X):
-        """
-        Returns
-        -------
-        y_hat : np.ndarray            final network output
-        graph : list[dict]            len(graph) == len(self.layers)
-                                    each dict k stores
-                                        'h_in' : input to layer k
-                                        'a'    : pre-activation
-                                        'h'    : post-activation
-        """
+      
         if X.ndim == 1:
             X = X.reshape(1, -1)
 
@@ -77,12 +68,12 @@ class MLP:
             a = dense(h, lyr["W"], lyr["b"])
             h_next = _activation[lyr["act"]][0](a)
             graph.append({"h_in": h, "a": a, "h": h_next})
-            h = h_next                          # feed to next layer
+            h = h_next                         
 
-        return h, graph                         # h == y_hat
+        return h, graph                        
 
 
-    # ───────────────────────── back-propagation ───────────────────────────
+    
     def _backprop(self, graph, delta_out):
         """
         graph      : list produced by _forward (len == #layers)
@@ -93,31 +84,31 @@ class MLP:
         grads in the *same order* as self.layers, each dict has 'W', 'b'
         """
         grads = []
-        delta = delta_out                                      # start chain
+        delta = delta_out                                    
 
-        # walk layers from output (last) to input (first) by index
+        
         for idx in range(len(self.layers) - 1, -1, -1):
             lyr   = self.layers[idx]
-            g_cur = graph[idx]               # input/activations of this layer
+            g_cur = graph[idx]               
 
-            # gradient wrt weights / biases
+            
             grad_W = delta.T @ g_cur["h_in"] / g_cur["h_in"].shape[0]
             grad_b = delta.mean(axis=0)
             grads.append({"W": grad_W, "b": grad_b})
 
-            # stop if we've reached the input layer
+            
             if idx == 0:
                 break
 
-            # propagate error to previous layer
-            dh = delta @ lyr["W"]                            # (batch × h_in)
+            
+            dh = delta @ lyr["W"]                           
             prev_a   = graph[idx - 1]["a"]
             prev_act = self.layers[idx - 1]["act"]
-            delta = dh * _activation[prev_act][1](prev_a)    # element-wise
+            delta = dh * _activation[prev_act][1](prev_a)    
 
         return list(reversed(grads))
 
-    # -------- SGD training --------
+    
     def fit(
         self,
         X_train,
@@ -145,17 +136,17 @@ class MLP:
                 delta_out = grad_compound_loss(yb, y_hat, lam=lam)
                 grads = self._backprop(graph, delta_out)
 
-                # update
+               
                 for lyr, g in zip(self.layers, grads):
                     lyr["W"] -= lr * g["W"]
                     lyr["b"] -= lr * g["b"]
 
-            # track training loss each epoch
+           
             y_hat_train, _ = self._forward(X_train)
             self.loss_history_.append(float(compound_loss(y_train, y_hat_train, lam=lam)))
         return self
 
-    # -------- prediction / R² --------
+    
     def predict(self, X):
         y_hat, _ = self._forward(X)
         return y_hat
