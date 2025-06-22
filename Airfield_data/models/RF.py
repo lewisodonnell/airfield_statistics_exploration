@@ -1,4 +1,4 @@
-# models/RF.py
+
 """
 Random-Forest built on DecisionTreeClassifier.
 """
@@ -34,7 +34,7 @@ class RandomForestClassifier(BaseModel):
         self.estimators_: List[DecisionTreeClassifier] = []
         self.feature_importances_: np.ndarray | None = None
 
-    # ---------------------------------------------------------------- fit
+    
     def fit(self, X, y):
         X_arr, y_arr = self._check_Xy(X, y)
         n_samples, n_features = X_arr.shape
@@ -55,31 +55,30 @@ class RandomForestClassifier(BaseModel):
                 min_samples_leaf=self.min_samples_leaf,
                 random_state=None,
             )
-            # tell tree how many features to sample per split
-            dt._n_subspace_features = m  # type: ignore[attr-defined]
+            
+            dt._n_subspace_features = m 
             dt.fit(X_boot, y_boot)
             self.estimators_.append(dt)
 
-            # accumulate importances  (always add – no guard)
+            
             self.feature_importances_ += dt.feature_importances_
 
         self.feature_importances_ /= self.n_estimators
-        # rescale to %-of-max convention (max → 1)
+        
         max_val = self.feature_importances_.max()
         if max_val > 0:
             self.feature_importances_ /= max_val
         return self
 
-    # --------------------------------------------------------- predict_proba
+    
     def predict_proba(self, X):
         return np.mean([t.predict_proba(X) for t in self.estimators_], axis=0)
 
-    # -------------------------------------------------------------- predict
+    
     def predict(self, X):
         preds = np.vstack([t.predict(X) for t in self.estimators_]).T
         return np.apply_along_axis(lambda row: np.bincount(row).argmax(), 1, preds)
 
-    # ------------------------------------------------ helper
     def _resolve_max_features(self, n_feats: int) -> int:
         if self.max_features == "sqrt":
             return max(1, int(np.sqrt(n_feats)))
