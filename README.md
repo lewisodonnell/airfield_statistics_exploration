@@ -92,4 +92,4 @@ print("Test accuracy:", clf.score(X_te, y_te))
 ```
 
 
-
+The motivation behind this project was to implement ideas introduced through the taught module "Methods for Data Science" at Imperial College London.  
