@@ -55,9 +55,9 @@ def main():
         "weighted": {f"{c1}_{c2}": round(float(v), 4) for (c1, c2), v in zip(PAIR_LIST, wgt_pair)},
         "standard": {f"{c1}_{c2}": round(float(v), 4) for (c1, c2), v in zip(PAIR_LIST, std_pair)},
     }
-    with open(RESULTS_DIR / "task1_4_pairwise.json", "w") as f:
+    with open(RESULTS_DIR / "test4_pairwise.json", "w") as f:
         json.dump(out, f, indent=2)
-    print(f"\nJSON saved ➜ {RESULTS_DIR/'task1_4_pairwise.json'}")
+    print(f"\nJSON saved ➜ {RESULTS_DIR/'test4_pairwise.json'}")
 
 
 if __name__ == "__main__":
