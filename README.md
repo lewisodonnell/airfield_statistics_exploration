@@ -77,15 +77,6 @@ pip install numpy pandas matplotlib tqdm
 
 No external machine‑learning library is required.
 
-## Testing
-
-Unit tests covering the custom models are provided in `Airfield_data/tests`.  Run them with
-
-```bash
-pytest
-```
-
-They verify that the algorithms reach the expected accuracies and R² scores on the dataset.
 
 ## Running your own analysis
 
