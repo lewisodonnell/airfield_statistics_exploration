@@ -1,10 +1,4 @@
-# experiments/task1_3.py
-"""
-Task 1.3 – Random-Forest accuracy + Gini feature-importance.
 
-Run:
-    python -m experiments.task1_3
-"""
 
 from pathlib import Path
 import json
@@ -19,10 +13,9 @@ RESULTS_DIR.mkdir(exist_ok=True)
 
 
 def main():
-    # data
+  
     X_tr, y_tr, X_te, y_te, cats = load_airfield_statistics()
 
-    # forest
     rf = RandomForestClassifier(
         cat_columns_dict=cats,
         n_estimators=20,
@@ -37,7 +30,6 @@ def main():
 
     print(f"Random-Forest  : train={acc_train:.4f} | test={acc_test:.4f}")
 
-    # ------------- feature importances plot -------------------------------
     imp = rf.feature_importances_
     imp_pct = 100 * imp / imp.max() if imp.max() else imp
     idx = np.argsort(imp_pct)
@@ -52,7 +44,6 @@ def main():
     plt.savefig(fig_path, dpi=300)
     print(f"Gini importance plot ➜ {fig_path}")
 
-    # ------------ persist raw numbers ------------------------------------
     json_path = RESULTS_DIR / "task1_3_metrics.json"
     with open(json_path, "w") as f:
         json.dump(
