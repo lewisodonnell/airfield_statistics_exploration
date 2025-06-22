@@ -1,17 +1,4 @@
-# experiments/task3_2.py
-"""
-Task 3.2 – binary weather/flight classifier
-• transfer-learning: freeze first 2 layers of Task 3.1 MLP
-• baseline: fresh 3-layer MLP trained from scratch
 
-Produces:
-    results/task3_2_transfer_loss.png
-    results/task3_2_scratch_loss.png
-    results/task3_2_comparison.png
-    results/task3_2_hist_transfer.png
-    results/task3_2_hist_scratch.png
-and prints the two test accuracies.
-"""
 
 from pathlib import Path
 from typing import Tuple
@@ -22,13 +9,12 @@ import matplotlib.pyplot as plt
 from data.loader import load_airfield_statistics
 from models.MLP import MLP
 from models.logistic import LogisticClassifier
-from metrics import r2_score   # only to keep API similar; not used
+from metrics import r2_score   
 
-# ───────────────────────────── paths ────────────────────────────────
+
 RESULTS = Path("results")
 RESULTS.mkdir(exist_ok=True)
 
-# ──────────────────── helper: prepare binary subset ──────────────────
 def _binary_subset() -> Tuple[np.ndarray, np.ndarray,
                               np.ndarray, np.ndarray]:
     """
@@ -48,7 +34,7 @@ def _binary_subset() -> Tuple[np.ndarray, np.ndarray,
 
     return X_tr, y_tr, X_te, y_te
 
-# ───────────────────── feature extractor (2 layers) ───────────────────
+
 def extract_features(X: np.ndarray, src_mlp: MLP) -> np.ndarray:
     """Pass X through the first two layers (0 and 1) of src_mlp."""
     h = X
@@ -59,18 +45,16 @@ def extract_features(X: np.ndarray, src_mlp: MLP) -> np.ndarray:
     return h
 
 
-# ───────────────────────────── main script ────────────────────────────
+
 def main():
-    # ---------- data ----------
+  
     X_tr, y_tr, X_te, y_te = _binary_subset()
 
-    # ---------- load pretrained MLP (λ = 0) ----------
     pretrained = MLP(seed=2)
     pretrained.add_layer(6, 20)
     pretrained.add_layer(20, 20, "relu")
     pretrained.add_layer(20, 2, "identity")
 
-    # load the weights saved after Task 3.1  (if not saved: retrain quickly)
     w_file = Path("results/task3_1_mlp_lambda0.npz")
     if w_file.exists():
         ws = np.load(w_file)
@@ -78,12 +62,12 @@ def main():
             lyr["W"] = ws[f"W{idx}"]
             lyr["b"] = ws[f"b{idx}"]
     else:
-        # quick re-train just to have weights (10 epochs are enough)
+      
         pretrained.fit(X_tr, np.column_stack([y_tr, y_tr]),
                        X_te, np.column_stack([y_te, y_te]),
                        lr=1e-5, epochs=10, batch=20)
 
-    # ---------- TRANSFER-LEARNED logistic layer ----------
+   
     X_tr_feat = extract_features(X_tr, pretrained)
     X_te_feat = extract_features(X_te, pretrained)
 
@@ -97,7 +81,6 @@ def main():
     acc_transfer = (clf.predict(X_te_feat) == y_te).mean()
     print(f"Transfer-learning test accuracy = {acc_transfer:.3f}")
 
-    # ---------- SCRATCH 3-layer MLP ----------
     mlp = MLP(seed=2)
     mlp.add_layer(6, 20)
     mlp.add_layer(20, 20, "relu")
@@ -106,7 +89,7 @@ def main():
     loss_scratch = []
     rng = np.random.default_rng(0)
     for epoch in range(50):
-        # full-batch gradient step
+
         y_hat, g = mlp._forward(X_tr)
         delta = (y_hat - y_tr.reshape(-1, 1))
         grads = mlp._backprop(g, delta)
@@ -119,7 +102,7 @@ def main():
     acc_scratch = ((mlp.predict(X_te) >= 0.5).astype(int).ravel() == y_te).mean()
     print(f"Scratch-MLP test accuracy    = {acc_scratch:.3f}")
 
-    # ---------- plots ----------
+  
     plt.figure(); plt.plot(loss_transfer)
     plt.xlabel("Epoch"); plt.ylabel("Loss")
     plt.title("Transfer-Learned Classifier Training")
