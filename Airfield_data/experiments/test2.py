@@ -1,11 +1,5 @@
 
-# experiments/task1_2.py
-"""
-Task 1.2 – ROC / AUC analysis for the *soft* Decision-Tree classifier.
 
-Run from the project root:
-    python -m experiments.task1_2
-"""
 
 from pathlib import Path
 import json
@@ -19,10 +13,10 @@ from metrics import roc_curve, auc
 
 
 def main():
-    # 1) ─── Load data ────────────────────────────────────────────────────────
+  
     X_train, y_train, X_test, y_test, cat_columns = load_airfield_statistics()
 
-    # 2) ─── Fit soft Decision-Tree ───────────────────────────────────────────
+    
     clf = DecisionTreeClassifier(
         cat_columns_dict=cat_columns,
         max_depth=10,
@@ -30,20 +24,20 @@ def main():
         random_state=0,
     ).fit(X_train, y_train)
 
-    prob_test = clf.predict_proba(X_test)        # shape (N_test, 4)
+    prob_test = clf.predict_proba(X_test)       
 
-    # 3) ─── Pair-wise ROC curves ────────────────────────────────────────────
+   
     class_pairs = list(itertools.combinations(range(4), 2))
     fig, axes = plt.subplots(2, 3, figsize=(14, 8))
     axes = axes.ravel()
 
-    auc_results = {}  # will be saved to JSON
+    auc_results = {}  
 
     for ax, (c1, c2) in zip(axes, class_pairs):
-        # keep only samples that are either c1 or c2
+        
         mask = np.isin(y_test, [c1, c2])
-        y_bin   = (y_test[mask] == c1).astype(int)   # 1 if class=c1 else 0
-        y_score = prob_test[mask, c1]               # P(class=c1)
+        y_bin   = (y_test[mask] == c1).astype(int)   
+        y_score = prob_test[mask, c1]             
 
         fpr, tpr, _ = roc_curve(y_bin, y_score)
         auc_val = auc(fpr, tpr)
@@ -58,7 +52,7 @@ def main():
 
     plt.tight_layout()
 
-    # 4) ─── Persist artefacts ───────────────────────────────────────────────
+    
     results_dir = Path("results")
     results_dir.mkdir(exist_ok=True)
 
@@ -69,7 +63,6 @@ def main():
     with open(json_path, "w") as f:
         json.dump(auc_results, f, indent=2)
 
-    # 5) ─── Console summary ─────────────────────────────────────────────────
     print(f"ROC grid saved to: {fig_path}")
     for pair, value in auc_results.items():
         c1, c2 = pair.split("_vs_")
